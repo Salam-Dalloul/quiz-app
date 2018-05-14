@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
+import randomize from '../../helpers/randomize';
 
 import './index.css';
 
@@ -45,7 +46,6 @@ class HomePage extends Component {
         _score ++;
       }
     });
-    console.log(ansBoxes);
 
     this.setState({
       ...this.state,
@@ -93,7 +93,7 @@ class HomePage extends Component {
           answers.push(q.correct_answer);
           questionsAnswers.push({
             question: q.question,
-            answers,
+            answers: randomize(answers),
             correct_answer: q.correct_answer
           });
         }
@@ -110,12 +110,13 @@ class HomePage extends Component {
                       <h3 className='question-headline '>{_q.question}</h3>
                       {
                         _q.answers.map((ans, index) => {
+                          const uniqueId = _qI + index;
                           return (
-                            <li key={index}>
+                            <li key={uniqueId}>
                               <input
                                 type='radio'
                                 name={`q${_qI}`}
-                                id={_qI + index}
+                                key={uniqueId}
                                 className='question-answers'
                                 value={ans === _q.correct_answer}
                                 onChange={this.handleAnswerSelect}
@@ -138,7 +139,7 @@ class HomePage extends Component {
     } else if (quizOver) {
       return (
         <div className='result'>
-          <p>Your Got: { score } / 10, in { Math.ceil(quizTime) }</p>
+          <p>Your Got: { score } / 10, in { Math.ceil(quizTime) } Seconds Time!</p>
           <button className='btn-check' onClick={this.handleReQuiz}>Do It Again</button>
         </div>
       );
