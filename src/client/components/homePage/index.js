@@ -72,12 +72,12 @@ class HomePage extends Component {
       );
       return (
         <div>
-          <div>
+          <div className='wrapper'>
             <ul>
               {
                 questionsAnswers.map((_q, _qI) => {
                   return (
-                    <div key={_qI} id={_qI} className='question__box'>
+                    <div key={_qI} id={_qI} className='.question-headline'>
                       <h3>{_q.question}</h3>
                       {
                         _q.answers.map((ans, index) => {
@@ -87,6 +87,7 @@ class HomePage extends Component {
                                 type='radio'
                                 name={`q${_qI}`}
                                 id={1}
+                                className='question-answers'
                                 value={ans === _q.correct_answer}
                                 onChange={this.handleAnswerSelect}
                               />
@@ -99,16 +100,17 @@ class HomePage extends Component {
                   );
                 })
               }
-              <button type='button' onClick={this.handleQuizSubmit}>Submit</button>
+              <button type='button' className='btn-check'
+                onClick={this.handleQuizSubmit}>Submit</button>
             </ul>
           </div>
         </div>
       );
     } else if (quizOver) {
       return (
-        <div>
-          Your Result is { score } / 10!!
-          <button className='' onClick={this.handleReQuiz}>Do It Again</button>
+        <div className='result'>
+          <p>Your Result is { score } / 10!!</p>
+          <button className='btn-check' onClick={this.handleReQuiz}>Do It Again</button>
         </div>
       );
     } else {
