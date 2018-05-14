@@ -77,8 +77,8 @@ class HomePage extends Component {
               {
                 questionsAnswers.map((_q, _qI) => {
                   return (
-                    <div key={_qI} id={_qI} className='.question-headline'>
-                      <h3>{_q.question}</h3>
+                    <div key={_qI} id={_qI} className='question__box question'>
+                      <h3 className='question-headline '>{_q.question}</h3>
                       {
                         _q.answers.map((ans, index) => {
                           return (
@@ -91,7 +91,7 @@ class HomePage extends Component {
                                 value={ans === _q.correct_answer}
                                 onChange={this.handleAnswerSelect}
                               />
-                              <label>{ans}</label><br/>
+                              <label className='answer'>{ans}</label><br/>
                             </li>
                           );
                         })
