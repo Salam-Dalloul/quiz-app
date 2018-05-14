@@ -66,6 +66,11 @@ body {
   text-align: center;
 }
 
+.btn-start{
+  margin-top: 20%;
+  margin-left: 40%;
+}
+
 .result p{
   margin-bottom: 1em;
 }
