@@ -1,0 +1,12 @@
+.homePage__loader-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #383e4e;
+}
+
+.loader {
+  border-top: 16px solid #00bc8c!important;
+}
