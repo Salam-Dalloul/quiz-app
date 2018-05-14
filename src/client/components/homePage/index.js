@@ -8,12 +8,24 @@ class HomePage extends Component {
   state = {
     results: [],
     score: 0,
-    quizOver: false
+    quizStarted: false,
+    quizOver: false,
+    clockStarted: '',
+    quizTime: ''
   }
 
   componentDidMount() {
     const { getQList } = this.props;
     getQList();
+  }
+
+  handleQuizStart = () => {
+    const _clockStarted = new Date().getTime() / 1000;
+    this.setState({
+      ...this.state,
+      quizStarted: true,
+      clockStarted: _clockStarted
+    });
   }
 
   handleAnswerSelect = e => {
@@ -23,31 +35,40 @@ class HomePage extends Component {
 
   handleQuizSubmit = () => {
     const ansBoxes = document.querySelectorAll('.question__box');
+    const clockOver = new Date().getTime() / 1000;
+    const { clockStarted } = this.state;
+    const _quizTime = clockOver - clockStarted;
+
     let _score = this.state.score;
     ansBoxes.forEach(ans => {
       if (ans.value) {
         _score ++;
       }
     });
+    console.log(ansBoxes);
 
     this.setState({
       ...this.state,
       score: _score,
-      quizOver: true
+      quizOver: true,
+      quizTime: _quizTime
     });
   }
 
   handleReQuiz = () => {
+    const _clockStarted = new Date().getTime() / 1000;
     this.setState({
       ...this.state,
       results: [],
       score: 0,
-      quizOver: false
+      quizOver: false,
+      quizStarted: true,
+      clockStarted: _clockStarted
     });
   }
 
   render() {
-    const { score, quizOver } = this.state;
+    const { score, quizStarted, quizOver, quizTime } = this.state;
     const { isFetching, qList } = this.props;
 
     if (isFetching) {
@@ -55,6 +76,13 @@ class HomePage extends Component {
         <div className='homePage__loader-container'>
           <div className='loader'>
           </div>
+        </div>
+      );
+    } else if (!quizStarted) {
+      return (
+        <div>
+          <button type='button' className='btn-check btn-start'
+            onClick={this.handleQuizStart}>Start Quiz!</button>
         </div>
       );
     } else if (qList.length && !quizOver) {
@@ -70,6 +98,7 @@ class HomePage extends Component {
           });
         }
       );
+
       return (
         <div>
           <div className='wrapper'>
@@ -86,7 +115,7 @@ class HomePage extends Component {
                               <input
                                 type='radio'
                                 name={`q${_qI}`}
-                                id={1}
+                                id={_qI + index}
                                 className='question-answers'
                                 value={ans === _q.correct_answer}
                                 onChange={this.handleAnswerSelect}
@@ -109,7 +138,7 @@ class HomePage extends Component {
     } else if (quizOver) {
       return (
         <div className='result'>
-          <p>Your Result is { score } / 10!!</p>
+          <p>Your Got: { score } / 10, in { Math.ceil(quizTime) }</p>
           <button className='btn-check' onClick={this.handleReQuiz}>Do It Again</button>
         </div>
       );
