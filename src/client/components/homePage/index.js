@@ -6,7 +6,9 @@ import './index.css';
 
 class HomePage extends Component {
   state = {
-    score: 0
+    results: [],
+    score: 0,
+    quizOver: false
   }
 
   componentDidMount() {
@@ -14,83 +16,104 @@ class HomePage extends Component {
     getQList();
   }
 
-  // handleAnswerChange = e => {
-  //   const qAns = e.target.value === 'true';
-  //   this.setState({
-  //     ...this.state,
-  //     currentAns: qAns
-  //   });
-  // }
+  handleAnswerSelect = e => {
+    const ansValue = e.target.value === 'true';
+    e.target.parentNode.parentNode.value = ansValue;
+  }
 
-  // handleAnswerSubmit = () => {
-  //   const { currentQ, currentAns, qAnswers, score } = this.state;
-  //   let _score = score;
-  //   currentAns ? _score++ : null;
-  //   const _QAnswers = qAnswers;
-  //
-  //   _QAnswers.push({
-  //     qId: currentQ,
-  //     qAns: currentAns
-  //   });
-  //
-  //   let _CurrentQ = currentQ;
-  //   _CurrentQ > 9 ? null : _CurrentQ++;
-  //
-  //   this.setState({
-  //     ...this.state,
-  //     currentQ: _CurrentQ,
-  //     qAnswers: _QAnswers,
-  //     currentAns: false,
-  //     score: _score
-  //   });
-  // }
+  handleQuizSubmit = () => {
+    const ansBoxes = document.querySelectorAll('.question__box');
+    let _score = this.state.score;
+    ansBoxes.forEach(ans => {
+      if (ans.value) {
+        _score ++;
+      }
+    });
+
+    this.setState({
+      ...this.state,
+      score: _score,
+      quizOver: true
+    });
+  }
+
+  handleReQuiz = () => {
+    this.setState({
+      ...this.state,
+      results: [],
+      score: 0,
+      quizOver: false
+    });
+  }
 
   render() {
-    const { score } = this.state;
+    const { score, quizOver } = this.state;
     const { isFetching, qList } = this.props;
-    console.log(qList);
-    return (
-      <div>
-        {
-          isFetching && (
-            <div className='homePage__loader-container'>
-              <div className='loader'>
-              </div>
-            </div>
-          )
-        }
-        {
-          <div>
-            <div>
-              {qList.map((q, qIndex) => {
-                <ul key={qIndex}>
-                  <h3>{q.question}</h3>;
-                  {
-                    q.incorrect_answers.map((ans, ansIndex) => {
-                      return (
-                        <li key={ansIndex}>
-                          <input type='radio' name={q.currentQ} id={ansIndex}
-                            value={false}
-                            onChange={this.handleAnswerChange}/>
-                          <label htmlFor='answer1'>{ans}</label><br/>
-                        </li>
-                      );
-                    }),
-                    <li key={qIndex+4}>
-                      <input type='radio' name={q.correct_answer} id={qIndex+4}
-                        value={false}
-                        onChange={this.handleAnswerChange}/>
-                      <label htmlFor='answer1'>{q.correct_answer}</label><br/>
-                    </li>
-                  }
-                </ul>;
-              })}
-              <button type='button' onClick={this.handleAnswerSubmit}>Submit</button>;
-            </div>
+
+    if (isFetching) {
+      return (
+        <div className='homePage__loader-container'>
+          <div className='loader'>
           </div>
+        </div>
+      );
+    } else if (qList.length && !quizOver) {
+      const questionsAnswers = [];
+      qList.map(
+        q => {
+          const answers = q.incorrect_answers;
+          answers.push(q.correct_answer);
+          questionsAnswers.push({
+            question: q.question,
+            answers,
+            correct_answer: q.correct_answer
+          });
         }
-      </div>
-    );
+      );
+      return (
+        <div>
+          <div>
+            <ul>
+              {
+                questionsAnswers.map((_q, _qI) => {
+                  return (
+                    <div key={_qI} id={_qI} className='question__box'>
+                      <h3>{_q.question}</h3>
+                      {
+                        _q.answers.map((ans, index) => {
+                          return (
+                            <li key={index}>
+                              <input
+                                type='radio'
+                                name={`q${_qI}`}
+                                id={1}
+                                value={ans === _q.correct_answer}
+                                onChange={this.handleAnswerSelect}
+                              />
+                              <label>{ans}</label><br/>
+                            </li>
+                          );
+                        })
+                      }
+                    </div>
+                  );
+                })
+              }
+              <button type='button' onClick={this.handleQuizSubmit}>Submit</button>
+            </ul>
+          </div>
+        </div>
+      );
+    } else if (quizOver) {
+      return (
+        <div>
+          Your Result is { score } / 10!!
+          <button className='' onClick={this.handleReQuiz}>Do It Again</button>
+        </div>
+      );
+    } else {
+      return '';
+    }
   }
 }
 
