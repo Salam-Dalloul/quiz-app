@@ -116,12 +116,12 @@ class HomePage extends Component {
                               <input
                                 type='radio'
                                 name={`q${_qI}`}
-                                key={uniqueId}
+                                id={uniqueId}
                                 className='question-answers'
                                 value={ans === _q.correct_answer}
                                 onChange={this.handleAnswerSelect}
                               />
-                              <label className='answer'>{ans}</label><br/>
+                              <label className='answer' htmlFor={uniqueId}>{ans}</label><br/>
                             </li>
                           );
                         })
